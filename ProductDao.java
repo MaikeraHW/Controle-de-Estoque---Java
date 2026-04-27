@@ -2,11 +2,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-/*import java.sql.SQLDataException;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.PreparedStatement;
-*/
+
 
 
 public class ProductDao {
@@ -77,4 +75,40 @@ public class ProductDao {
                 Ex.getMessage();
             }
     }
+
+        //método excluir item
+    public void excluir(int id){
+        String sql = "DELETE FROM produtos WHERE id_produto = ?";
+            try(PreparedStatement stmt = CONEXAO_DB.prepareStatement(sql)) {
+                stmt.setInt(1, id);
+                stmt.executeUpdate();
+            } catch (SQLException Ex) {
+                Ex.getMessage();
+            }
+    }
+
+    //método listar todos os itens
+    public List<Product> listarTodos() {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM produtos";
+        try (PreparedStatement stmt = CONEXAO_DB.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                Product produto = new Product();
+                produto.setId(rs.getInt("id_produto"));
+                produto.setName(rs.getString("nome_produto"));
+                produto.setQuantidade(rs.getInt("quantidade"));
+                produto.setPreco(rs.getDouble("preco"));  
+                produto.setStatus(rs.getString("status"));
+                products.add(produto);
+                }
+                
+        } catch (Exception ex) {
+            ex.getMessage();
+        }
+        return products;
+    }
+
+
+
 }
