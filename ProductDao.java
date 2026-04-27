@@ -31,6 +31,8 @@ public class ProductDao {
         }
     }
 
+
+    //excluir todos os itens
     public void ExcluirTodos(){
         String sql = "DELETE FROM produtos";
         try (PreparedStatement stmt = CONEXAO_DB.prepareStatement(sql)){
@@ -41,6 +43,7 @@ public class ProductDao {
     
 }
 
+    //consultar item pela ID
     public Product consultarPorId(int id){
         String sql = "SELECT * FROM produtos WHERE id_produto = ?";
            try (PreparedStatement stmt = CONEXAO_DB.prepareStatement(sql);
@@ -50,13 +53,28 @@ public class ProductDao {
                         Product product = new Product();
                         product.setId(rs.getInt("id_produto"));
                         product.setName(rs.getString("nome_produto"));
-                        product.setQuantidade(rs.getInt("quantidade_produto"));
-                        product.setStatus(rs.getString("status_produto"));
-                        product.setPreco(rs.getDouble("preco_produto"));
+                        product.setQuantidade(rs.getInt("quantidade"));
+                        product.setStatus(rs.getString("status"));
+                        product.setPreco(rs.getDouble("preco"));
                         return product;
                     }
                 } catch (SQLException e){
             e.getMessage();
         } return null;
+    }
+
+    //atualizar dados
+    public void atualizar(Product product){
+        String sql = "UPDATE produtos SET nome_produto = ?, quantidade = ?, preco = ?, status = ? WHERE id_produto = ?";
+            try (PreparedStatement stmt = CONEXAO_DB.prepareStatement(sql)) {
+                stmt.setString(1, product.getName());
+                stmt.setInt(2, product.getQuantidade());
+                stmt.setDouble(3, product.getPreco());
+                stmt.setString(4, product.getStatus());
+                stmt.setInt(5, product.getId());
+                stmt.executeUpdate();
+            } catch (SQLException Ex) {
+                Ex.getMessage();
+            }
     }
 }
