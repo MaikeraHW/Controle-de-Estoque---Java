@@ -44,9 +44,9 @@ public class ProductDao {
     //consultar item pela ID
     public Product consultarPorId(int id){
         String sql = "SELECT * FROM produtos WHERE id_produto = ?";
-           try (PreparedStatement stmt = CONEXAO_DB.prepareStatement(sql);
-                ResultSet rs = stmt.executeQuery())
-                { stmt.setInt(1, id);
+           try (PreparedStatement stmt = CONEXAO_DB.prepareStatement(sql)){
+                     stmt.setInt(1, id);
+                    try (ResultSet rs = stmt.executeQuery()){
                     if(rs.next()){
                         Product product = new Product();
                         product.setId(rs.getInt("id_produto"));
@@ -56,6 +56,9 @@ public class ProductDao {
                         product.setPreco(rs.getDouble("preco"));
                         return product;
                     }
+                } catch (SQLException e){
+            e.getMessage();
+        }
                 } catch (SQLException e){
             e.getMessage();
         } return null;
@@ -108,7 +111,5 @@ public class ProductDao {
         }
         return products;
     }
-
-
 
 }
