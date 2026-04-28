@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 
 public class Main {
@@ -8,7 +9,7 @@ public class Main {
             ProductDao productDao = new ProductDao(conexao);
 
 
-        //mostrarProdutos(ProductDao);
+        mostrarProdutos(productDao);
 
         Product product1 = new Product("Notebook", 10, 2000, "Em estoque");
         Product product2 = new Product("Tablet", 15, 1000, "Fora de estoque");
@@ -19,11 +20,36 @@ public class Main {
         productDao.Inserir(product3);
 
 
-        //mostrarProdutos(ProductDao);
+        mostrarProdutos(productDao);
+
+        //consulta por ID
+        Product produtoConsultado = productDao.consultarPorId(1);
+            if (produtoConsultado != null) {
+                System.out.println(produtoConsultado.getName());
+            } else {
+                System.out.println("Item não encontrado");
+            }
+
+
 
         } catch (SQLException e) {
-            e.getMessage();
+            System.err.println(e.getMessage());
         }
-    
+
+        
 }
+
+        //método para listar os produtos
+        private static void mostrarProdutos(ProductDao productDao) {
+            List<Product> todosProducts = productDao.listarTodos();
+                if (todosProducts.isEmpty()) {
+                    System.out.println("Nenhum produto encontrado");
+                } else {
+                    System.out.println("Lista de Produtos:");
+                    for (Product p : todosProducts){
+                        System.out.println(p.getId() + p.getName() + p.getQuantidade() + p.getPreco());
+                    }
+                }
+        }
+        
 }
