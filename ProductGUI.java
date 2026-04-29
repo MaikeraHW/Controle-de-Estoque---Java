@@ -8,12 +8,9 @@ import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
-
-import java.lang.classfile.Label;
 import java.sql.Connection;
 import java.util.List;
-
-import javax.swing.text.TableView;
+import javax.swing.table.TableColumn;
 
 public class ProductGUI extends Application {
     private ProductDao productDao;
@@ -83,7 +80,7 @@ public class ProductGUI extends Application {
         updateButton.setOnAction( e -> {
             Product produtoSelecionado = tableView.getSelectionModel().getSelectedItem();
             if (produtoSelecionado != null){
-                produtoSelecionado.setNome(nomeInput.getText());
+                produtoSelecionado.setName(nomeInput.getText());
                 produtoSelecionado.setQuantidade(Integer.parseInt(quantidadeInput.getText()));
                 produtoSelecionado.setPreco(Double.parseDouble(precoInput.getText().replace(',', '.')));
                 produtoSelecionado.setStatus(statusComboBox.getValue());
@@ -91,14 +88,54 @@ public class ProductGUI extends Application {
                 products.setAll(productDao.listarTodos());
                 //limparCampos();
             }
-            
         });
 
-        
+        Button deleteButton = new Button("Excluir");
+        deleteButton.setOnAction( e -> {
+            Product produtoSelecionado = tableView.getSelectionModel().getSelectedItem();
+            if (produtoSelecionado != null){
+                productDao.excluir(produtoSelecionado.getId());
+                products.setAll(productDao.listarTodos());
+                //limparCampos();
+            }
+        });
+
+        Button clearButton = new Button("Limpar");
+            deleteButton.setOnAction( e -> {
+                //productDao.limparCampos();
+    });
+
+        tableView = new TableView<>();
+        tableView.setItems(products);
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        List<TableColumn<Product, ?>> columns = List<E>.of(
+            criarColuna("ID", "id"),
+            criarColuna("Produto", "name"),
+            criarColuna("Quantidade", "quantidade"),
+            criarColuna("Preço", "preco"),
+            criarColuna("Status", "status")
+        );
+        tableView.getColumns().addAll(columns);
+        tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                nomeInput.setText(newSelection.getNome());
+                quantidadeInput.setText(String.valueOf(newSelection.getQuantidade()));
+                precoInput.setText(String.valueOf(newSelection.getPreco()));
+                statusComboBox.setValue(newSelection.getStatus());
+            }
+        });
 
 
 
-        vbox.getChildren().addAll(nomeProdutoBox, quantidadeBox, precoBox, statusBox);
+
+
+        HBox buttonsBox = new HBox();
+        buttonsBox.setSpacing(10);
+        buttonsBox.getChildren().addAll(addButton, updateButton, deleteButton, clearButton);
+
+
+
+        vbox.getChildren().addAll(nomeProdutoBox, quantidadeBox, precoBox, statusBox, buttonsBox);
 
 
 
