@@ -73,7 +73,7 @@ public class ProductGUI extends Application {
 
             productDao.Inserir(produtoAdicionado);
             products.setAll(productDao.listarTodos());
-            //limparCampos();
+            limparCampos();
         });
 
         Button updateButton = new Button("Atualizar");
