@@ -8,8 +8,12 @@ import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.lang.classfile.Label;
 import java.sql.Connection;
 import java.util.List;
+
+import javax.swing.text.TableView;
 
 public class ProductGUI extends Application {
     private ProductDao productDao;
@@ -61,7 +65,45 @@ public class ProductGUI extends Application {
         statusComboBox.getItems().addAll("Estoque Baixo", "Estoque Normal", "Estoque Alto");
         statusBox.getChildren().addAll(statusLabel, statusComboBox);
 
+        Button addButton = new Button("Adicionar");
+        addButton.setOnAction( e -> {
+            double preco = Double.parseDouble(precoInput.getText().replace(',', '.'));
+            String nome = nomeInput.getText();
+            int quantidade = Integer.parseInt(quantidadeInput.getText());
+            String status = statusComboBox.getValue();
+
+            Product produtoAdicionado = new Product(nome, quantidade, preco, status);
+
+            productDao.Inserir(produtoAdicionado);
+            products.setAll(productDao.listarTodos());
+            //limparCampos();
+        });
+
+        Button updateButton = new Button("Atualizar");
+        updateButton.setOnAction( e -> {
+            Product produtoSelecionado = tableView.getSelectionModel().getSelectedItem();
+            if (produtoSelecionado != null){
+                produtoSelecionado.setNome(nomeInput.getText());
+                produtoSelecionado.setQuantidade(Integer.parseInt(quantidadeInput.getText()));
+                produtoSelecionado.setPreco(Double.parseDouble(precoInput.getText().replace(',', '.')));
+                produtoSelecionado.setStatus(statusComboBox.getValue());
+                productDao.atualizar(produtoSelecionado);
+                products.setAll(productDao.listarTodos());
+                //limparCampos();
+            }
+            
+        });
+
+        
+
+
+
         vbox.getChildren().addAll(nomeProdutoBox, quantidadeBox, precoBox, statusBox);
+
+
+
+
+
 
         Scene scene = new Scene(vbox, 600, 600);
         palco.setScene(scene);
